@@ -1,0 +1,66 @@
+# docker-compose.yml — окружение для локальной разработки и запуска
+# всего стека одной командой: `docker compose up`.
+#
+# Redis уже упомянут в стеке проекта, но не добавляется в этот файл сейчас:
+# принцип YAGNI — не добавлять инфраструктуру, которая ещё не используется
+# кодом. Сервис появится здесь в той версии, где реально понадобится
+# (например, кэширование результатов анализа сайтов).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: leadflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: leadflow
+      POSTGRES_PASSWORD: leadflow
+      POSTGRES_DB: leadflow
+    ports:
+      - "5432:5432"
+    volumes:
+      # Именованный volume вместо bind mount: данные БД переживают
+      # `docker compose down` (но не `docker compose down -v`), и их
+      # расположение не зависит от структуры файловой системы хоста.
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # app должен стартовать только после того, как Postgres реально
+      # готов принимать соединения, а не просто после старта контейнера
+      # (эти события не совпадают по времени — Postgres инициализируется
+      # несколько секунд после запуска процесса).
+      test: ["CMD-SHELL", "pg_isready -U leadflow -d leadflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: leadflow-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # В контейнере app обращается к postgres по имени сервиса
+      # (Docker DNS внутри compose-сети), а не по localhost.
+      LEADFLOW_DATABASE_HOST: postgres
+      LEADFLOW_DATABASE_PORT: 5432
+      LEADFLOW_DATABASE_USER: leadflow
+      LEADFLOW_DATABASE_PASSWORD: leadflow
+      LEADFLOW_DATABASE_NAME: leadflow
+      LEADFLOW_LOGGER_FORMAT: json
+      LEADFLOW_LOGGER_LEVEL: info
+      LEADFLOW_AI_PROVIDER: mock
+      LEADFLOW_AI_API_KEY: ""
+      LEADFLOW_AI_MODEL: ""
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_data:

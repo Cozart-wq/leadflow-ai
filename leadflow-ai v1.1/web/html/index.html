@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadFlow AI</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>LeadFlow AI</h1>
+        <p class="subtitle">Платформа автоматизации лидогенерации — v1.1</p>
+        <div id="user-bar" class="user-bar hidden">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="delete-btn">Выйти</button>
+        </div>
+    </header>
+
+    <section id="auth-panel" class="panel auth-panel">
+        <div class="auth-tabs">
+            <button id="tab-login" class="auth-tab active">Вход</button>
+            <button id="tab-register" class="auth-tab">Регистрация</button>
+        </div>
+
+        <form id="login-form" class="auth-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+            <input type="text" id="register-name" placeholder="Имя" required>
+            <input type="email" id="register-email" placeholder="Email" required>
+            <input type="password" id="register-password" placeholder="Пароль (минимум 8 символов)" required minlength="8">
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+
+        <p id="auth-status"></p>
+    </section>
+
+    <main class="main hidden" id="dashboard">
+        <section class="panel">
+            <h2>Новая задача поиска</h2>
+            <form id="task-form" class="task-form">
+                <input type="text" id="query-input" placeholder="Например: кофейни в Москве" required>
+                <button type="submit">Запустить поиск</button>
+            </form>
+            <p id="task-status"></p>
+        </section>
+
+        <section class="panel">
+            <h2>Задачи</h2>
+            <table class="table" id="tasks-table">
+                <thead>
+                    <tr><th>Запрос</th><th>Статус</th><th>Создана</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Лиды</h2>
+            <table class="table" id="leads-table">
+                <thead>
+                    <tr>
+                        <th>Компания</th><th>Сайт</th><th>Email</th><th>Телефон</th>
+                        <th>Скор</th><th>Рекомендация</th><th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>v1.1</p>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
+

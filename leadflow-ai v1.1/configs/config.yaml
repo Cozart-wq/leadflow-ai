@@ -1,0 +1,38 @@
+# Конфигурация LeadFlow AI по умолчанию (для локальной разработки).
+#
+# В продакшене чувствительные значения (пароли, хосты) должны
+# передаваться через переменные окружения LEADFLOW_*, а не храниться
+# здесь. Этот файл — удобная отправная точка для разработки на localhost.
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout_seconds: 10
+  write_timeout_seconds: 10
+  idle_timeout_seconds: 60
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "leadflow"
+  password: "leadflow"
+  name: "leadflow"
+  sslmode: "disable"
+  max_open_conns: 25
+  max_idle_conns: 25
+  conn_max_lifetime_minutes: 5
+
+logger:
+  level: "debug"
+  format: "console"
+
+ai:
+  provider: "mock"   # openai | claude | gemini | mock
+  api_key: ""
+  model: ""
+
+auth:
+  # Небезопасное значение по умолчанию, годится только для localhost.
+  # В продакшене задаётся через LEADFLOW_AUTH_JWT_SECRET.
+  jwt_secret: "dev-only-insecure-secret-change-me-in-production"
+  access_token_ttl_minutes: 1440
